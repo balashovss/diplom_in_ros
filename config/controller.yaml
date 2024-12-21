@@ -1,0 +1,26 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 50 #Hz
+    leg_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+leg_controller:
+  ros__parameters:
+    joints:
+      - q1
+      - q2
+      - q3
+      - q4
+      - q5
+      - q6
+      - q7
+      - q8
+      - q9
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    open_loop_control: false
+    allow_integration_in_goal_trajectories: true
+    allow_nonzero_velocity_at_trajectory_end: true

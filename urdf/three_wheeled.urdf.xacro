@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot xmlns:xacro="http://wiki.ros.org/xacro"
+  name="three_legged_robot">
+  <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+    <render_engine>ogre2</render_engine>
+      <ros>
+        <namespace>/box_bot</namespace>
+          <remapping>~/out:=laser_scan</remapping>
+      </ros>
+    <output_type>sensor_msgs/LaserScan</output_type>
+  </plugin>
+    <xacro:macro name="default_transmission" params="joint_name">
+        <transmission name="transmission_${joint_name}">
+            <plugin>transmission_interface/SimpleTransmission</plugin>
+            <actuator name="actuator_${joint_name}" role="actuator_${joint_name}"/>
+            <joint name="${joint_name}" role="${joint_name}">
+                <mechanical_reduction>1.0</mechanical_reduction>
+            </joint>
+        </transmission>
+    </xacro:macro>
+    <gazebo reference="lidar_head_link">
+    <sensor type="gpu_lidar" name="lidar_head_link">
+          <gz_frame_id>lidar_head_link</gz_frame_id>
+          <topic>scan</topic>
+          <update_rate>10</update_rate>          
+          <pose>0 0 2.0 0 0 0</pose>
+          <lidar>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-3.14</min_angle>
+                <max_angle>3.14</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>16</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.261799</min_angle>
+                <max_angle>0.261799</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10.0</max>
+              <resolution>0.01</resolution>
+            </range>
+          </lidar>
+          <alwaysOn>true</alwaysOn>
+          <visualize>true</visualize>
+          
+    </sensor>
+    </gazebo>
+  <link
+    name="map">
+    <inertial>
+      <origin
+        xyz="4.5102810375397E-17 0 -0.000499999999999945"
+        rpy="0 0 0" />
+      <mass
+        value="6.1261056745001E-06" />
+      <inertia
+        ixx="8.93390410864599E-13"
+        ixy="-1.66202821367583E-58"
+        ixz="2.95962595510492E-45"
+        iyy="8.93390410864599E-13"
+        iyz="4.70349326783696E-42"
+        izz="7.65763209312513E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/world.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/world.STL" />
+      </geometry>
+    </collision>
+  </link>
+    <joint name="laser_joint" type="fixed">
+     <parent link="base"/>
+     <child link="lidar_head_link"/>
+     <origin xyz="0.1 0 0.05" rpy="0 0 0"/>
+   </joint>
+   <link name="lidar_head_link">
+      <visual>
+         <origin xyz="0 0 0"/>
+         <geometry>
+            <cylinder length="0.04" radius="0.05"/>
+         </geometry>
+         <material name="laser_material">
+            <color rgba="0.13 0.13 0.13 1.0"/>
+         </material>
+      </visual>
+      <collision>
+         <origin xyz="0 0 0"/>
+         <geometry>
+            <cylinder length="0.04" radius="0.05"/>
+         </geometry>
+      </collision>
+   </link>
+    
+  <link
+    name="base">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="2.54" />
+      <inertia
+        ixx="0.01"
+        ixy="0"
+        ixz="0"
+        iyy="0.01"
+        iyz="0"
+        izz="0.02" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 1.0472" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/base.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/base.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+    <joint name="x" type="prismatic">
+      <origin xyz="0 0 0.7" rpy="0 0 0"/>
+      <limit lower="-1000" upper="1000" effort="1000" velocity="1000" />
+      <axis xyz="1 0 0"/>
+      <parent link="map" />
+      <child link="base" />
+    </joint>
+  <!-- <joint
+    name="world_to_base"
+    type="continuous">
+    <origin
+      xyz="0 0 0.62353"
+      rpy="0 0 0" />
+    <parent
+      link="world" />
+    <child
+      link="base" />
+    <axis
+      xyz="0 0 -1" />
+  </joint> -->
+
+
+  <link
+    name="leg1_upper_link">
+    <inertial>
+      <origin
+        xyz="0 0 -0.105"
+        rpy="0 0 0" />
+      <mass
+        value="0.63" />
+      <inertia
+        ixx="0.0011498"
+        ixy="0"
+        ixz="0"
+        iyy="0.0011498"
+        iyz="0"
+        izz="0.00023794" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_upper_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_upper_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+
+   <joint
+    name="q1"
+    type="continuous">
+    <origin
+      xyz="0.09547 0.16536 0"
+      rpy="0 0 0" />
+    <parent
+      link="base" />
+    <child
+      link="leg1_upper_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+  <link
+    name="leg2_upper_link">
+    <inertial>
+      <origin
+        xyz="0 0 -0.105"
+        rpy="0 0 0" />
+      <mass
+        value="0.63" />
+      <inertia
+        ixx="0.0011498"
+        ixy="0"
+        ixz="0"
+        iyy="0.0011498"
+        iyz="0"
+        izz="0.00023794" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_upper_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_upper_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+
+  <joint
+    name="q2"
+    type="continuous">
+    <origin
+      xyz="-0.19094 0 0"
+      rpy="0 0 3.1415" />
+    <parent
+      link="base" />
+    <child
+      link="leg2_upper_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+    <link
+    name="leg3_upper_link">
+    <inertial>
+      <origin
+        xyz="0 0 -0.105"
+        rpy="0 0 0" />
+      <mass
+        value="0.63" />
+      <inertia
+        ixx="0.0011498"
+        ixy="0"
+        ixz="0"
+        iyy="0.0011498"
+        iyz="0"
+        izz="0.00023794" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_upper_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_upper_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q3"
+    type="continuous">
+    <origin
+      xyz="0.09547 -0.16536 0"
+      rpy="0 0 0" />
+    <parent
+      link="base" />
+    <child
+      link="leg3_upper_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+
+  <link
+    name="leg1_medium_link">
+    <inertial>
+      <origin
+        xyz="0.037361 -0.090306 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.71" />
+      <inertia
+        ixx="0.04"
+        ixy="0"
+        ixz="0"
+        iyy="0.04"
+        iyz="0"
+        izz="0.00435" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_medium_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_medium_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q4"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.21"
+      rpy="1.5708 0 -0.1" />
+    <parent
+      link="leg1_upper_link" />
+    <child
+      link="leg1_medium_link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+
+    <link
+    name="leg2_medium_link">
+    <inertial>
+      <origin
+        xyz="0.037361 -0.090306 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.71" />
+      <inertia
+        ixx="0.04"
+        ixy="0"
+        ixz="0"
+        iyy="0.04"
+        iyz="0"
+        izz="0.00435" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_medium_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_medium_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q5"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.21"
+      rpy="1.5708 0 0.1" />
+    <parent
+      link="leg2_upper_link" />
+    <child
+      link="leg2_medium_link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+
+    <link
+    name="leg3_medium_link">
+    <inertial>
+      <origin
+        xyz="0.037361 -0.090306 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.71" />
+      <inertia
+        ixx="0.04"
+        ixy="0"
+        ixz="0"
+        iyy="0.04"
+        iyz="0"
+        izz="0.00435" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_medium_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_medium_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q6"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.21"
+      rpy="1.5708 0 0.1" />
+    <parent
+      link="leg3_upper_link" />
+    <child
+      link="leg3_medium_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  
+    <link
+    name="leg1_bottom_link">
+    <inertial>
+      <origin
+        xyz="0.068158 -0.068158 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.72" />
+      <inertia
+        ixx="0.0008995"
+        ixy="0"
+        ixz="0"
+        iyy="0.0008995"
+        iyz="0"
+        izz="0.000151" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_bottom_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_bottom_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q7"
+    type="fixed">
+    <origin
+      xyz="0.08052 -0.19409 0"
+      rpy="0 0 -0.8354" />
+    <parent
+      link="leg1_medium_link" />
+    <child
+      link="leg1_bottom_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+  <link
+    name="leg2_bottom_link">
+    <inertial>
+      <origin
+        xyz="0.078824 -0.078487 -0.00028114"
+        rpy="0 0 0" />
+      <mass
+        value="0.9" />
+      <inertia
+        ixx="0.0046814"
+        ixy="0"
+        ixz="0"
+        iyy="0.0046814"
+        iyz="0"
+        izz="0.0077262" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg2_bottom_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg2_bottom_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q8"
+    type="fixed">
+    <origin
+      xyz="0.08052 -0.19409 0"
+      rpy="0 0 -0.8354" />
+    <parent
+      link="leg2_medium_link" />
+    <child
+      link="leg2_bottom_link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+
+  <link
+    name="leg3_bottom_link">
+    <inertial>
+      <origin
+        xyz="0.068158 -0.068158 0"
+        rpy="0 0 0" />
+      <mass
+        value="0.72" />
+      <inertia
+        ixx="0.0008995"
+        ixy="0"
+        ixz="0"
+        iyy="0.0008995"
+        iyz="0"
+        izz="0.000151" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_bottom_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 0 0 1"  />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/leg1_bottom_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q9"
+    type="fixed">
+    <origin
+      xyz="0.08052 -0.19409 0"
+      rpy="0 0 -0.8354" />
+    <parent
+      link="leg3_medium_link" />
+    <child
+      link="leg3_bottom_link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  
+
+  <link
+    name="leg1_wheel_link">
+    <inertial>
+      <origin
+        xyz="0 0 -0.0098602"
+        rpy="0 0 0" />
+      <mass
+        value="0.25" />
+      <inertia
+        ixx="6E-05"
+        ixy="0"
+        ixz="0"
+        iyy="6E-05"
+        iyz="0"
+        izz="7E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q10"
+    type="continuous">
+    <origin
+      xyz="0.14849 -0.14849 0"
+      rpy="3.1415 0 -0.78545" />
+    <parent
+      link="leg1_bottom_link" />
+    <child
+      link="leg1_wheel_link" />
+    <axis
+      xyz="0 0 -1" />
+  </joint>
+
+  
+
+
+  <link
+    name="wheel">
+    <inertial>
+      <origin
+        xyz="0 0 -0.0098602"
+        rpy="0 0 0" />
+      <mass
+        value="0.25" />
+      <inertia
+        ixx="6E-05"
+        ixy="0"
+        ixz="0"
+        iyy="6E-05"
+        iyz="0"
+        izz="7E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/meshes/wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="q11"
+    type="continuous"> 
+    <origin
+      xyz="0.14849 -0.14849 0"
+      rpy="0 0 -0.78545" />
+    <parent
+      link="leg3_bottom_link" />
+    <child
+      link="wheel" />  
+    <axis
+      xyz="0 0 1" />
+  </joint>
+
+
+
+
+  <xacro:default_transmission joint_name="q1"/>
+  <xacro:default_transmission joint_name="q2"/>
+  <xacro:default_transmission joint_name="q3"/>
+  <xacro:default_transmission joint_name="q10"/>
+  <xacro:default_transmission joint_name="q11"/>
+
+      <ros2_control name="GazeboSimSystem" type="system">
+        <hardware>
+            <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        </hardware>
+
+        <joint name="q1">
+            <command_interface name="position">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="q2">
+            <command_interface name="position">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="q3">
+            <command_interface name="position">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+        </joint>
+
+        <joint name="q10">
+            <command_interface name="velocity">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+
+        <joint name="q11">
+            <command_interface name="velocity">
+                <param name="min">-3.14</param>
+                <param name="max">3.14</param>
+            </command_interface>
+            <state_interface name="position"/>
+            <state_interface name="velocity"/>
+        </joint>
+    </ros2_control>
+   <!-- <gazebo reference="laser">
+    <sensor type="gpu_lidar" name="ray" topic_name="lidar">
+          <topic>lidar</topic>
+          <update_rate>10</update_rate>
+          <lidar>
+            <scan>
+              <horizontal>
+                <samples>640</samples>
+                <resolution>1</resolution>
+                <min_angle>-1.396263</min_angle>
+                <max_angle>1.396263</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>16</samples>
+                <resolution>1</resolution>
+                <min_angle>-0.261799</min_angle>
+                <max_angle>0.261799</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.08</min>
+              <max>10.0</max>
+              <resolution>0.01</resolution>
+            </range>
+          </lidar>
+          <alwaysOn>1</alwaysOn>
+          <visualize>true</visualize>
+    </sensor>
+    <plugin
+      filename="gz-sim-sensors-system"
+      name="gz::sim::systems::Sensors">
+      <topic_name>/laser/scan</topic_name>
+      <frame_name>laser</frame_name>
+      <render_engine>ogre2</render_engine>
+      </plugin>
+      <! <ros>
+      <remapping>
+        /out:=scan
+      </remapping>
+      </ros> -->
+
+    <gazebo>
+        <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+            <parameters>/home/semakiller/diplom/three_legged_robot_ws/src/three_legged_robot/config/rotation_controller.yaml</parameters>
+            <ros>
+                <remapping>/controller_manager/robot_description:=/robot_description</remapping>
+            </ros>
+        </plugin>
+    </gazebo>
+    <gazebo reference="leg1_wheel_link">
+      <surface>
+        <contact>
+          <ode>
+            <min_depth>0.01</min_depth>
+          </ode>
+        </contact>
+      </surface>
+      <visual>
+          <material>
+              <ambient>0.2 0.2 0.2 1.0</ambient>
+              <diffuse>0.2 0.2 0.2 1.0</diffuse>
+              <specular>0.2 0.2 0.2 1.0</specular>
+              <emissive>0.0 0.0 0.0 0.0</emissive>
+          </material>
+      </visual>
+  </gazebo>
+  <gazebo reference="wheel">
+      <surface>
+        <contact>
+          <ode>
+            <min_depth>0.01</min_depth>
+          </ode>
+        </contact>
+      </surface>
+      <visual>
+          <material>
+              <ambient>0.2 0.2 0.2 1.0</ambient>
+              <diffuse>0.2 0.2 0.2 1.0</diffuse>
+              <specular>0.2 0.2 0.2 1.0</specular>
+              <emissive>0.0 0.0 0.0 0.0</emissive>
+          </material>
+      </visual>
+  </gazebo>
+  <gazebo reference="leg2_bottom_link">
+      <surface>
+        <friction>
+          <ode>
+              <mu>0</mu>
+              <mu2>0.0</mu2>
+          </ode>
+        </friction>
+      </surface>
+      <visual>
+      </visual>
+  </gazebo>
+
+</robot>
